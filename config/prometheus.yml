@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 5s
+  external_labels:
+    monitor: 'monitoring'
+
+
+scrape_configs:
+  - job_name: 'blackbox_https'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # On utilise http_2xx qui gère aussi HTTPS
+    static_configs:
+      - targets:
+        - 'https://google.ca'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+
+  - job_name: 'blackbox_icmp'
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+      - targets:
+        - 'google.ca'    
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'trading'
+    static_configs:
+      - targets: ['metrics.xxxxxxx.com:9100']

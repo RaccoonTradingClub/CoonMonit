@@ -1,0 +1,87 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - monitoring
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./config/blackbox.yml:/config/blackbox.yml
+    command:
+      - '--config.file=/config/blackbox.yml'
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=ChangeMe
+      - GF_UNIFIED_ALERTING_ENABLED=true
+      - GF_ALERTING_ENABLED=false
+      # Telegram
+      - GF_TELEGRAM_BOT_TOKEN=XXXXXXX:XXXXXXXX
+      - GF_TELEGRAM_CHAT_ID=XXXXXXXX
+    networks:
+      - monitoring
+
+  caddy:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - monitoring
+
+  app:
+    restart: always
+    build: coonfront/.
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    networks:
+      - monitoring
+
+  exporter:
+    restart: always
+    build: coonforex
+    ports:
+      - "9100:9100"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    networks:
+      - monitoring
+
+  redis:
+    image: "redis:alpine"
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  caddy_data:
+  caddy_config:
