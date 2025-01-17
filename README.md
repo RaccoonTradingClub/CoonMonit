@@ -1,16 +1,23 @@
-# CoonMonit
+# 📉📊📈 CoonMonit
 
 # Installation Guide - MetaTrader to Prometheus Exporter
 
 This guide will help you set up the backend infrastructure for the CoonMonit MetaTrader to Prometheus Exporter.
 
-## Prerequisites
+# MetaTrader Utilities
+
+➡️  [CoonMonit MT4](https://www.mql5.com/en/market/product/130465)
+
+➡️  [CoonMonit MT5](https://www.mql5.com/en/market/product/130464)
+
+
+## 👋 Prerequisites
 
 - Docker and Docker Compose installed on your system
 - Git to clone the repository
 - Basic understanding of YAML configuration files
 
-## Installation Steps
+## 💻 Installation Steps
 
 ### 1. Clone the Repository
 
@@ -58,7 +65,7 @@ docker compose ps
 - Prometheus: http://localhost:9090
 - Metrics endpoint: http://localhost:9091/metrics
 
-## Troubleshooting
+## 📚 Troubleshooting
 
 If you encounter any issues:
 
@@ -72,13 +79,13 @@ docker compose logs [service_name]
 - Permission issues: Check folder permissions for mounted volumes
 - Configuration errors: Validate YAML syntax in configuration files
 
-## Security Notes
+## 🔻 Security Notes
 
 - Change the default Grafana password in docker-compose.yml
 - Consider implementing additional security measures like basic authentication
 - Use HTTPS in production environments
 
-## Next Steps
+## 🚀 Next Steps
 
 After successful installation:
 1. Configure your MetaTrader client to connect to the exporter
